@@ -12,3 +12,8 @@ class ColorTranslator:
         b = y + 2.03211 * u
         return (r, g, b)
 
+    def resize(self, input_path, output_path, factor):
+        import subprocess
+        scale_filter = f"scale=iw/{factor}:ih/{factor}"
+        command = ["ffmpeg", "-i", input_path, "-vf", scale_filter, output_path]
+        subprocess.run(command, check=True)
