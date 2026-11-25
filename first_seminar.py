@@ -1,3 +1,8 @@
+from unittest import result
+
+from pyparsing import col
+
+
 class ColorTranslator:
     def rgb_to_yuv(self, r, g, b):
         
@@ -17,3 +22,62 @@ class ColorTranslator:
         scale_filter = f"scale=iw/{factor}:ih/{factor}"
         command = ["ffmpeg", "-i", input_path, "-vf", scale_filter, output_path]
         subprocess.run(command, check=True)
+
+    def zigzag(self, matrix):
+        row=0
+        col=0
+
+        result=[]
+        for i in range(64):
+            result.append(matrix[row][col])
+            #Diagonal going up
+            if (row + col) % 2 == 0:
+                if col == 7:
+                    row += 1
+                elif row == 0:
+                    col += 1
+                else:
+                    row -= 1
+                    col += 1
+            #diagonal going down
+            else:
+                if row == 7:
+                    col += 1
+                elif col == 0:
+                    row += 1
+                else:
+                    row += 1
+                    col -= 1
+        return result
+
+    def inverse_zigzag(self, array):
+        row = 0
+        col = 0
+        matrix = []
+
+        for i in range(8):
+            rows= [0] * 8
+            matrix.append(rows)
+
+        for i in range(64):
+            matrix[row][col] = array[i]
+            # Diagonal going up
+            if (row + col) % 2 == 0:
+                if col == 7:
+                    row += 1
+                elif row == 0:
+                    col += 1
+                else:
+                    row -= 1
+                    col += 1
+            # Diagonal going down
+            else:
+                if row == 7:
+                    col += 1
+                elif col == 0:
+                    row += 1
+                else:
+                    row += 1
+                    col -= 1
+
+        return matrix
